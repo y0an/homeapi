@@ -3,7 +3,6 @@ var mongo = require('mongodb');
 var Server = mongo.Server,
     Db = mongo.Db,
     BSON = mongo.BSONPure
-    //JSON = mongo.JSONPure
     ;
 
 var server = new Server('localhost', 27017, {auto_reconnect: true});
@@ -41,17 +40,14 @@ exports.findAll = function(req, res) {
 
 exports.add = function(req, res) {
     var room = req.body;
-    console.log('room:' + room);
     console.log('Adding room: ' + JSON.stringify(room));
     db.collection('rooms', function(err, collection) {
-        console.log('collection:' + collection);
-        console.log('room:' + room);
-        collection.insert(room, {safe:true}, function(err, result) {
-            if (err) {
+        collection.insertOne(room, {safe:true}, function(error, result) {
+            if (error) {
                 res.send({'error':'An error has occurred'});
             } else {
-                console.log('Success: ' + JSON.stringify(result[0]));
-                res.send(result[0]);
+                console.log('Success: ' + JSON.stringify(result.ops[0]));
+                res.send(result.ops[0]);
             }
         });
     });
